@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>3R to 3H to 3A Educational Confluence</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.11.4/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+      body {
+        font-family: "Roboto", sans-serif;
+        overflow-x: hidden;
+      }
+
+      .hero-gradient {
+        background: linear-gradient(
+          to right,
+          rgba(113, 17, 23, 0.9),
+          rgba(136, 103, 42, 0.9)
+        );
+      }
+
+      .mountain-bg {
+        background-image: url("/api/placeholder/1920/1080");
+        background-size: cover;
+        background-position: center;
+      }
+
+      .fade-in {
+        opacity: 0;
+        transform: translateY(20px);
+        transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+      }
+
+      .fade-in.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .path-animation {
+        stroke-dasharray: 1000;
+        stroke-dashoffset: 1000;
+        animation: dash 2s linear forwards;
+      }
+
+      @keyframes dash {
+        to {
+          stroke-dashoffset: 0;
+        }
+      }
+
+      .timeline-dot {
+        transition: all 0.3s ease;
+      }
+
+      .timeline-dot:hover {
+        transform: scale(1.2);
+      }
+
+      .card-hover {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+
+      .card-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      }
+
+      @keyframes gradient {
+        0% {
+          background-position: 0% 50%;
+        }
+        50% {
+          background-position: 100% 50%;
+        }
+        100% {
+          background-position: 0% 50%;
+        }
+      }
+
+      .animate-gradient {
+        background-size: 300% 300%;
+        animation: gradient 15s ease infinite;
+      }
+
+      .timeline-dot::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        background: rgba(59, 130, 246, 0.2);
+        border-radius: 50%;
+        transform: scale(0);
+        transition: transform 0.3s ease;
+      }
+
+      .timeline-dot:hover::after {
+        transform: scale(2);
+      }
+
+      /* Update nav styles */
+      .navbar {
+        z-index: 50;
+        transition: all 300ms;
+        background: transparent;
+      }
+
+      .navbar.scrolled {
+        background: var(--theme-gradient);
+        backdrop-filter: blur(8px);
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Add new styles for navbar gradient */
+      .navbar-gradient {
+        background: linear-gradient(
+          to right,
+          rgba(113, 17, 23, 0.95),
+          rgba(136, 103, 42, 0.95)
+        );
+        background-size: 300% 300%;
+        animation: gradient 15s ease infinite;
+        transition: all 0.3s ease;
+      }
+
+      /* Theme colors */
+      :root {
+        --theme-gradient: linear-gradient(to right, #711117, #88672a);
+        --theme-from: #711117;
+        --theme-to: #88672a;
+      }
+
+      /* Theme text styles */
+      .hero-section h1.title,
+      .hero-section h2.subtitle {
+        color: #711117;
+        -webkit-text-fill-color: initial;
+      }
+
+      .hero-section h1:not(.title),
+      .hero-section h2:not(.subtitle),
+      footer h1,
+      footer h2,
+      footer h3,
+      footer h4 {
+        color: white;
+        -webkit-text-fill-color: initial;
+      }
+
+      section:not(.hero-section) h1,
+      section:not(.hero-section) h2,
+      section:not(.hero-section) h3,
+      section:not(.hero-section) h4 {
+        color: #711117;
+        -webkit-text-fill-color: initial;
+      }
+
+      /* Theme button styles */
+      .theme-button {
+        background: var(--theme-gradient);
+        color: white;
+        transition: all 0.3s ease;
+      }
+
+      .theme-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 20px rgba(113, 17, 23, 0.2);
+      }
+
+      /* Footer styles */
+      footer {
+        background-color: #711117;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-50">
+    <!-- Navigation -->
+    <nav
+      class="fixed w-full z-50 transition-all duration-300 navbar-gradient"
+      id="navbar"
+    >
+      <div
+        class="container mx-auto px-6 py-3 flex justify-between items-center"
+      >
+        <div class="flex items-center space-x-2">
+          <div class="w-10 h-10 rounded-full flex items-center justify-center">
+            <img
+              src="https://hial.edu.in/static/logo_white.png"
+              alt="HIAL Logo"
+              class="w-full h-full object-contain"
+            />
+          </div>
+          <span class="w-10 h-10 rounded-full flex items-center justify-center">
+            <img
+              src="https://hial.edu.in/static/logo.png"
+              alt="HIAL Logo"
+              class="w-full h-full object-cover"
+            />
+          </span>
+        </div>
+        <div class="hidden md:flex space-x-8 text-sm font-medium">
+          <a
+            href="#about"
+            class="text-white hover:text-[#88672a] transition-colors"
+            >About</a
+          >
+          <a
+            href="#theme"
+            class="text-white hover:text-[#88672a] transition-colors"
+            >Theme</a
+          >
+          <a
+            href="#schedule"
+            class="text-white hover:text-[#88672a] transition-colors"
+            >Schedule</a
+          >
+          <a
+            href="#register"
+            class="text-white hover:text-[#88672a] transition-colors"
+            >Register</a
+          >
+          <a
+            href="#contact"
+            class="text-white hover:text-[#88672a] transition-colors"
+            >Contact</a
+          >
+        </div>
+        <div class="md:hidden">
+          <button class="text-gray-600" id="menu-toggle">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+      <!-- Mobile Menu -->
+      <div
+        class="md:hidden hidden bg-white w-full py-3 px-6 shadow-inner"
+        id="mobile-menu"
+      >
+        <div class="flex flex-col space-y-4 text-sm font-medium">
+          <a
+            href="#about"
+            class="text-gray-600 hover:text-[#711117] transition-colors"
+            >About</a
+          >
+          <a
+            href="#theme"
+            class="text-gray-600 hover:text-[#711117] transition-colors"
+            >Theme</a
+          >
+          <a
+            href="#schedule"
+            class="text-gray-600 hover:text-blue-600 transition-colors"
+            >Schedule</a
+          >
+          <a
+            href="#register"
+            class="text-gray-600 hover:text-blue-600 transition-colors"
+            >Register</a
+          >
+          <a
+            href="#contact"
+            class="text-gray-600 hover:text-blue-600 transition-colors"
+            >Contact</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="relative h-screen mountain-bg hero-section">
+      <div
+        class="absolute inset-0 bg-gradient-to-r from-[#ed1c24]/90 via-[#f4b528]/85 to-[#1caf71]/90 animate-gradient"
+      ></div>
+      <div
+        class="container mx-auto px-6 relative z-10 h-full flex flex-col justify-center items-center text-center"
+      >
+        <h1 class="text-4xl md:text-6xl font-bold mb-4 title">
+          3R to 3H to 3A
+        </h1>
+        <h2 class="text-xl md:text-3xl font-medium mb-8 subtitle">
+          Educational Confluence
+        </h2>
+        <p class="text-xl text-white mb-10 max-w-2xl">
+          Contextual, Relevant & Experiential Higher Education
+        </p>
+        <div class="flex flex-wrap justify-center gap-4">
+          <div
+            class="bg-white/10 backdrop-blur-lg rounded-2xl px-8 py-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+          >
+            <p class="text-white">
+              <span class="font-bold">Where:</span> HIAL, Ladakh
+            </p>
+          </div>
+          <div
+            class="bg-white/10 backdrop-blur-lg rounded-2xl px-8 py-4 border border-white/20 hover:bg-white/20 transition-all duration-300"
+          >
+            <p class="text-white">
+              <span class="font-bold">When:</span> May 23-28, 2025
+            </p>
+          </div>
+        </div>
+        <a
+          href="#register"
+          class="mt-10 bg-gradient-to-r from-[#711117] to-[#88672a] hover:from-[#88672a] hover:to-[#711117] text-white font-bold py-4 px-10 rounded-full transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105"
+        >
+          Register Now
+        </a>
+      </div>
+      <div
+        class="absolute bottom-10 left-0 right-0 flex justify-center animate-bounce"
+      >
+        <a href="#about">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 14l-7 7m0 0l-7-7m7 7V3"
+            />
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-white">
+      <div class="container mx-auto px-6">
+        <div class="flex flex-col md:flex-row items-center">
+          <div class="w-full md:w-1/2 mb-10 md:mb-0">
+            <img
+              src="https://hial.edu.in/static/gallery.jpg"
+              alt="HIAL University"
+              class="rounded-xl shadow-lg fade-in"
+            />
+          </div>
+          <div class="w-full md:w-1/2 md:pl-12">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6 fade-in">
+              About HIAL
+            </h2>
+            <p class="text-gray-600 mb-6 leading-relaxed fade-in">
+              HIAL is dedicated to mountain development, striving to establish
+              Ladakh as a model for sustainable economic living in mountainous
+              regions. Its initiatives provide transformative educational
+              experiences, create Centres of Excellence to demonstrate
+              innovative approaches to education and environmental
+              sustainability, and promote locally focused sustainable
+              development.
+            </p>
+            <p class="text-gray-600 mb-8 leading-relaxed fade-in">
+              Since April 2019, HIAL has run an Experiential Learning
+              Fellowship, which began with 11 fellows and has now grown to 20.
+              The Experiential Learning Project (ELP) enables fellows to develop
+              solutions for mountain communities while gaining skills in
+              strategic thinking, design thinking, problem-solving, teamwork,
+              and project management.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Conference Info -->
+    <section class="py-20 bg-gray-50">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-16 fade-in">
+          From 3R to 3H to 3A
+        </h2>
+        <div
+          class="flex flex-col md:flex-row justify-center items-center md:space-x-8 space-y-10 md:space-y-0"
+        >
+          <div
+            class="w-full md:w-1/3 bg-gradient-to-br from-white to-red-50 rounded-xl shadow-lg p-8 card-hover fade-in border border-red-100"
+          >
+            <div
+              class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-6 mx-auto"
+            >
+              <span class="text-red-600 text-2xl font-bold">3R</span>
+            </div>
+            <h3 class="text-xl font-semibold text-center mb-4">Traditional</h3>
+            <ul class="space-y-2 text-gray-600">
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Reading
+              </li>
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                wRiting
+              </li>
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                aRithmetic
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="w-full md:w-1/3 bg-gradient-to-br from-white to-blue-50 rounded-xl shadow-lg p-8 card-hover fade-in border border-blue-100"
+          >
+            <div
+              class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-6 mx-auto"
+            >
+              <span class="text-blue-600 text-2xl font-bold">3H</span>
+            </div>
+            <h3 class="text-xl font-semibold text-center mb-4">Holistic</h3>
+            <ul class="space-y-2 text-gray-600">
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Bright Head
+              </li>
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Kind Heart
+              </li>
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-blue-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Skilled Hands
+              </li>
+            </ul>
+          </div>
+
+          <div
+            class="w-full md:w-1/3 bg-gradient-to-br from-white to-green-50 rounded-xl shadow-lg p-8 card-hover fade-in border border-green-100"
+          >
+            <div
+              class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-6 mx-auto"
+            >
+              <span class="text-green-600 text-2xl font-bold">3A</span>
+            </div>
+            <h3 class="text-xl font-semibold text-center mb-4">
+              Comprehensive
+            </h3>
+            <ul class="space-y-2 text-gray-600">
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Adhyatmika (Spiritual)
+              </li>
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Adhibhautika (Material)
+              </li>
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  ></path>
+                </svg>
+                Adhidaivika (Divine)
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Theme Section -->
+    <section id="theme" class="py-20 bg-white">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-16 fade-in">
+          Theme & Scope
+        </h2>
+        <div
+          class="flex flex-col md:flex-row md:space-x-10 space-y-10 md:space-y-0"
+        >
+          <div class="w-full md:w-1/2 fade-in">
+            <div class="bg-blue-50 rounded-xl p-8 h-full">
+              <h3 class="text-2xl font-semibold text-blue-800 mb-6">
+                Theme of the Conference
+              </h3>
+              <p class="text-gray-700 mb-6 leading-relaxed">
+                Building on HIAL's "Learning by Doing" and "Collaborative
+                Teaching" models, the confluence will emphasize contextual,
+                trans-disciplinary, and experiential learning in Higher
+                Education.
+              </p>
+              <p class="text-gray-700 leading-relaxed">
+                Over five days, international experts will share experiences,
+                exchange ideas, expand networks, and find inspiration.
+              </p>
+            </div>
+          </div>
+          <div class="w-full md:w-1/2 fade-in">
+            <div class="bg-green-50 rounded-xl p-8 h-full">
+              <h3 class="text-2xl font-semibold text-green-800 mb-6">
+                Scope of the Conference
+              </h3>
+              <p class="text-gray-700 mb-4">
+                The five-day confluence will focus on making higher education
+                experiential by designing curricula and pedagogies based on:
+              </p>
+              <ul class="space-y-4 text-gray-700">
+                <li class="flex">
+                  <svg
+                    class="w-6 h-6 mr-2 text-green-600 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  <span
+                    ><strong>Designing Futuristic Curricula</strong> —
+                    Contextual and trans-disciplinary approaches.</span
+                  >
+                </li>
+                <li class="flex">
+                  <svg
+                    class="w-6 h-6 mr-2 text-green-600 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  <span
+                    ><strong>Developing Innovative Pedagogical Tools</strong> —
+                    Experiential and immersive methodologies.</span
+                  >
+                </li>
+                <li class="flex">
+                  <svg
+                    class="w-6 h-6 mr-2 text-green-600 flex-shrink-0"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  <span
+                    ><strong>Reclaiming Indigenous Wisdom</strong> — Integrating
+                    traditional knowledge into modern education.</span
+                  >
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Schedule Section -->
+    <section id="schedule" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-16 fade-in">
+          Event Schedule
+        </h2>
+
+        <div class="max-w-4xl mx-auto relative fade-in">
+          <!-- Vertical Line -->
+          <div
+            class="absolute left-1/2 transform -translate-x-1/2 h-full w-0.5 bg-gradient-to-b from-[#711117] to-[#88672a]"
+          ></div>
+
+          <!-- Timeline Items -->
+          <div class="relative space-y-8">
+            <!-- Day 1 -->
+            <div class="flex items-center justify-between">
+              <div class="w-5/12">
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <h3 class="text-lg font-semibold text-[#711117] mb-2">
+                    Day 1 - May 23rd, 2025
+                  </h3>
+                  <h4 class="font-medium text-gray-800 mb-2">
+                    Arrival and Welcome
+                  </h4>
+                  <p class="text-gray-600 mb-2">
+                    Arrival in Ladakh, acclimatization at
+                    <span class="font-semibold">SECMOL</span>
+                  </p>
+                  <p class="text-gray-600">Evening welcome meeting</p>
+                  <div
+                    class="mt-3 inline-block bg-[#88672a]/10 rounded-lg px-3 py-1"
+                  >
+                    <p class="text-[#88672a] text-sm">Accommodation: SECMOL</p>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute left-1/2 transform -translate-x-1/2 w-8 h-8">
+                <div
+                  class="w-8 h-8 bg-[#711117] rounded-full border-4 border-white shadow"
+                ></div>
+              </div>
+              <div class="w-5/12"></div>
+            </div>
+
+            <!-- Day 2 -->
+            <div class="flex items-center justify-between">
+              <div class="w-5/12"></div>
+              <div class="absolute left-1/2 transform -translate-x-1/2 w-8 h-8">
+                <div
+                  class="w-8 h-8 bg-[#711117] rounded-full border-4 border-white shadow"
+                ></div>
+              </div>
+              <div class="w-5/12">
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <h3 class="text-lg font-semibold text-[#711117] mb-2">
+                    Day 2 - May 24th, 2025
+                  </h3>
+                  <h4 class="font-medium text-gray-800 mb-2">
+                    Contextual Education at SECMOL
+                  </h4>
+                  <p class="text-gray-600 mb-2">
+                    Campus tour and
+                    <span class="font-semibold">café table conference</span>
+                  </p>
+                  <p class="text-gray-600">
+                    Keynote by
+                    <span class="font-semibold"
+                      >Sonam Wangchuk or Gitanjali J B</span
+                    >
+                  </p>
+                  <div
+                    class="mt-3 inline-block bg-[#88672a]/10 rounded-lg px-3 py-1"
+                  >
+                    <p class="text-[#88672a] text-sm">Accommodation: SECMOL</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Day 3 -->
+            <div class="flex items-center justify-between">
+              <div class="w-5/12">
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <h3 class="text-lg font-semibold text-[#711117] mb-2">
+                    Day 3 - May 25th, 2025
+                  </h3>
+                  <h4 class="font-medium text-gray-800 mb-2">
+                    Experiential Learning at HIAL
+                  </h4>
+                  <p class="text-gray-600">
+                    Second
+                    <span class="font-semibold">café table conference</span>
+                  </p>
+                  <div
+                    class="mt-3 inline-block bg-[#88672a]/10 rounded-lg px-3 py-1"
+                  >
+                    <p class="text-[#88672a] text-sm">
+                      Accommodation: HIAL Campus
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute left-1/2 transform -translate-x-1/2 w-8 h-8">
+                <div
+                  class="w-8 h-8 bg-[#711117] rounded-full border-4 border-white shadow"
+                ></div>
+              </div>
+              <div class="w-5/12"></div>
+            </div>
+
+            <!-- Day 4 -->
+            <div class="flex items-center justify-between">
+              <div class="w-5/12"></div>
+              <div class="absolute left-1/2 transform -translate-x-1/2 w-8 h-8">
+                <div
+                  class="w-8 h-8 bg-[#711117] rounded-full border-4 border-white shadow"
+                ></div>
+              </div>
+              <div class="w-5/12">
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <h3 class="text-lg font-semibold text-[#711117] mb-2">
+                    Day 4 - May 26th, 2025
+                  </h3>
+                  <h4 class="font-medium text-gray-800 mb-2">
+                    Trans-disciplinary Approach
+                  </h4>
+                  <p class="text-gray-600 mb-2">
+                    Excursion to
+                    <span class="font-semibold">Kulum/Tarchit</span>
+                  </p>
+                  <p class="text-gray-600">Dinner in Leh</p>
+                  <div
+                    class="mt-3 inline-block bg-[#88672a]/10 rounded-lg px-3 py-1"
+                  >
+                    <p class="text-[#88672a] text-sm">
+                      Accommodation: HIAL Campus
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Day 5 -->
+            <div class="flex items-center justify-between">
+              <div class="w-5/12">
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <h3 class="text-lg font-semibold text-[#711117] mb-2">
+                    Day 5 - May 27th, 2025
+                  </h3>
+                  <h4 class="font-medium text-gray-800 mb-2">
+                    Cultural Exploration
+                  </h4>
+                  <p class="text-gray-600 mb-2">
+                    Travel to
+                    <span class="font-semibold">Ulleytokpo Resort</span> via
+                    <span class="font-semibold">Alchi</span>
+                  </p>
+                  <p class="text-gray-600 mb-2">
+                    Explore Himalayas and traditional culture
+                  </p>
+                  <p class="text-gray-600">
+                    Session on <span class="font-semibold">3R to 3H to 3A</span>
+                  </p>
+                  <div
+                    class="mt-3 inline-block bg-[#88672a]/10 rounded-lg px-3 py-1"
+                  >
+                    <p class="text-[#88672a] text-sm">
+                      Accommodation: Ulleytokpo Resort
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div class="absolute left-1/2 transform -translate-x-1/2 w-8 h-8">
+                <div
+                  class="w-8 h-8 bg-[#711117] rounded-full border-4 border-white shadow"
+                ></div>
+              </div>
+              <div class="w-5/12"></div>
+            </div>
+
+            <!-- Day 6 -->
+            <div class="flex items-center justify-between">
+              <div class="w-5/12"></div>
+              <div class="absolute left-1/2 transform -translate-x-1/2 w-8 h-8">
+                <div
+                  class="w-8 h-8 bg-[#711117] rounded-full border-4 border-white shadow"
+                ></div>
+              </div>
+              <div class="w-5/12">
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <h3 class="text-lg font-semibold text-[#711117] mb-2">
+                    Day 6 - May 28th, 2025
+                  </h3>
+                  <h4 class="font-medium text-gray-800 mb-2">
+                    Higher Order Thinking & Free Time
+                  </h4>
+                  <p class="text-gray-600 mb-2">Session by Gitanjali J B</p>
+                  <p class="text-gray-600 mb-2">Lunch in Leh</p>
+                  <p class="text-gray-600">Free time to explore Leh market</p>
+                  <div
+                    class="mt-3 inline-block bg-[#88672a]/10 rounded-lg px-3 py-1"
+                  >
+                    <p class="text-[#88672a] text-sm">
+                      Accommodation: HIAL Campus
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Departure -->
+            <div class="flex items-center justify-between">
+              <div class="w-5/12">
+                <div
+                  class="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl transition-shadow"
+                >
+                  <h3 class="text-lg font-semibold text-[#711117] mb-2">
+                    May 29th, 2025
+                  </h3>
+                  <h4 class="font-medium text-gray-800 mb-2">Departure</h4>
+                  <p class="text-gray-600">Morning departures</p>
+                  <p class="text-gray-600">Safe travels!</p>
+                </div>
+              </div>
+              <div class="absolute left-1/2 transform -translate-x-1/2 w-8 h-8">
+                <div
+                  class="w-8 h-8 bg-[#88672a] rounded-full border-4 border-white shadow"
+                ></div>
+              </div>
+              <div class="w-5/12"></div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="mt-16 max-w-2xl mx-auto bg-[#711117]/5 rounded-xl p-6 fade-in border border-[#711117]/20"
+        >
+          <p class="text-gray-700 leading-relaxed">
+            Participants will also explore the relationship between spirituality
+            and education through discussions on the 3A's. Apart from in-depth
+            sessions, participants will visit scenic locations in Ladakh and
+            SECMOL Alternative School Campus to experience alternative learning
+            in practice.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Registration Section -->
+    <section id="register" class="py-20 bg-white">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-16 fade-in">
+          Registration Details
+        </h2>
+
+        <div class="max-w-3xl mx-auto">
+          <div
+            class="bg-[#711117]/5 rounded-xl p-8 mb-10 shadow-lg fade-in border border-[#711117]/20"
+          >
+            <div class="space-y-8">
+              <div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-2">
+                  Last date for registration:
+                </h4>
+                <p class="text-gray-700">March 31, 2025</p>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">
+                  Investment:
+                </h4>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                    <h5 class="text-xl font-semibold text-[#711117] mb-4">
+                      Double Occupancy
+                    </h5>
+                    <p class="text-3xl font-bold text-gray-800 mb-2">₹35,000</p>
+                    <p class="text-gray-600">per participant</p>
+                  </div>
+                  <div class="bg-white rounded-xl p-6 shadow-md card-hover">
+                    <h5 class="text-xl font-semibold text-[#711117] mb-4">
+                      Single Occupancy
+                    </h5>
+                    <p class="text-3xl font-bold text-gray-800 mb-2">₹45,000</p>
+                    <p class="text-gray-600">per participant</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <h4 class="text-lg font-semibold text-gray-800 mb-4">
+                  Includes:
+                </h4>
+                <ul class="space-y-2">
+                  <li class="flex items-center text-gray-700">
+                    <svg
+                      class="w-5 h-5 mr-2 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                    Training fees
+                  </li>
+                  <li class="flex items-center text-gray-700">
+                    <svg
+                      class="w-5 h-5 mr-2 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                    Course materials
+                  </li>
+                  <li class="flex items-center text-gray-700">
+                    <svg
+                      class="w-5 h-5 mr-2 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                    Accommodation
+                  </li>
+                  <li class="flex items-center text-gray-700">
+                    <svg
+                      class="w-5 h-5 mr-2 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                    Food
+                  </li>
+                  <li class="flex items-center text-gray-700">
+                    <svg
+                      class="w-5 h-5 mr-2 text-green-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M5 13l4 4L19 7"
+                      ></path>
+                    </svg>
+                    Field trip
+                  </li>
+                </ul>
+              </div>
+
+              <div class="bg-blue-50 rounded-xl p-6 border border-blue-100">
+                <div class="flex items-center mb-4">
+                  <svg
+                    class="w-6 h-6 text-blue-600 mr-2"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 10V3L4 14h7v7l9-11h-7z"
+                    />
+                  </svg>
+                  <h4 class="text-lg font-semibold text-blue-800">
+                    Group Discount Available!
+                  </h4>
+                </div>
+                <p class="text-gray-700">
+                  Get <span class="text-[#711117] font-bold">20% off</span> for
+                  groups of 4 or more participants
+                </p>
+              </div>
+
+              <div class="text-center space-y-6">
+                <p class="text-gray-600">For queries, contact:</p>
+                <div class="space-y-4">
+                  <div class="flex items-center justify-center">
+                    <svg
+                      class="w-5 h-5 mr-2 text-[#711117]"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                      />
+                    </svg>
+                    <a
+                      href="mailto:3rto3h@hial.edu.in"
+                      class="text-[#711117] hover:text-[#88672a]"
+                      >3rto3h@hial.edu.in</a
+                    >
+                  </div>
+                  <div class="flex items-center justify-center space-x-4">
+                    <span class="text-gray-700">Call:</span>
+                    <div class="space-y-2">
+                      <p>
+                        Dechen Spalzes:
+                        <a
+                          href="tel:+917051992140"
+                          class="text-[#711117] hover:text-blue-700"
+                          >+91 70519 92140</a
+                        >
+                      </p>
+                      <p>
+                        Atharva Chaturvedi:
+                        <a
+                          href="tel:+918097073592"
+                          class="text-[#711117] hover:text-blue-700"
+                          >+91 80970 73592</a
+                        >
+                      </p>
+                    </div>
+                  </div>
+                </div>
+                <a
+                  href="#"
+                  class="inline-block bg-gradient-to-r from-[#711117] to-[#88672a] text-white font-bold py-4 px-10 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-xl"
+                >
+                  Register Now
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-gray-50">
+      <div class="container mx-auto px-6">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-16 fade-in">
+          Contact Us
+        </h2>
+
+        <div class="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="bg-white rounded-xl p-8 shadow-lg fade-in card-hover">
+            <h3 class="text-2xl font-semibold text-blue-800 mb-6">
+              Get in Touch
+            </h3>
+            <div class="space-y-6">
+              <div class="flex items-center">
+                <div
+                  class="w-12 h-12 bg-[#711117]/10 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <svg
+                    class="w-6 h-6 text-[#711117]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <p class="text-sm text-gray-600">Email</p>
+                  <a
+                    href="mailto:3rto3h@hial.edu.in"
+                    class="text-[#711117] hover:text-[#88672a]"
+                    >3rto3h@hial.edu.in</a
+                  >
+                </div>
+              </div>
+
+              <div class="flex items-center">
+                <div
+                  class="w-12 h-12 bg-[#711117]/10 rounded-full flex items-center justify-center flex-shrink-0"
+                >
+                  <svg
+                    class="w-6 h-6 text-[#711117]"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+                    />
+                  </svg>
+                </div>
+                <div class="ml-4">
+                  <p class="text-sm text-gray-600">Phone</p>
+                  <div class="space-y-1">
+                    <p class="text-gray-800">
+                      Dechen Spalzes:
+                      <a
+                        href="tel:+917051992140"
+                        class="text-[#711117] hover:text-blue-700"
+                        >+91 70519 92140</a
+                      >
+                    </p>
+                    <p class="text-gray-800">
+                      Atharva Chaturvedi:
+                      <a
+                        href="tel:+918097073592"
+                        class="text-[#711117] hover:text-blue-700"
+                        >+91 80970 73592</a
+                      >
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white rounded-xl p-8 shadow-lg fade-in">
+            <h3 class="text-2xl font-semibold mb-6 text-[#88672a]">
+              Why Attend?
+            </h3>
+            <ul class="space-y-4">
+              <li class="flex items-start">
+                <svg
+                  class="w-6 h-6 mr-2 flex-shrink-0 text-[#88672a]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span class="text-gray-700"
+                  >Connect with international education experts</span
+                >
+              </li>
+              <li class="flex items-start">
+                <svg
+                  class="w-6 h-6 mr-2 flex-shrink-0 text-[#88672a]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span class="text-gray-700"
+                  >Experience innovative learning methodologies</span
+                >
+              </li>
+              <li class="flex items-start">
+                <svg
+                  class="w-6 h-6 mr-2 flex-shrink-0 text-[#88672a]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span class="text-gray-700"
+                  >Explore the beautiful Ladakh region</span
+                >
+              </li>
+              <li class="flex items-start">
+                <svg
+                  class="w-6 h-6 mr-2 flex-shrink-0 text-[#88672a]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M5 13l4 4L19 7"
+                  />
+                </svg>
+                <span class="text-gray-700"
+                  >Contribute to the future of higher education</span
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-white py-12">
+      <div class="container mx-auto px-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div>
+            <div class="flex items-center space-x-2 mb-4">
+              <div
+                class="w-10 h-10 rounded-full flex items-center justify-center"
+              >
+                <img
+                  src="https://hial.edu.in/static/logo_white.png"
+                  alt="HIAL Logo"
+                  class="w-full h-full object-contain"
+                />
+              </div>
+              <span class="text-xl font-bold">3R to 3H to 3A</span>
+            </div>
+            <p class="text-gray-400">
+              Transforming higher education through contextual, experiential
+              learning in the heart of Ladakh.
+            </p>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+            <ul class="space-y-2">
+              <li>
+                <a
+                  href="#about"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >About</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#theme"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >Theme</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#schedule"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >Schedule</a
+                >
+              </li>
+              <li>
+                <a
+                  href="#register"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >Register</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-lg font-semibold text-white mb-4">Contact</h4>
+            <ul class="space-y-2">
+              <li class="flex items-center">
+                <svg
+                  class="w-5 h-5 mr-2 text-gray-400"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                  />
+                </svg>
+                <a
+                  href="mailto:3rto3h@hial.edu.in"
+                  class="text-gray-400 hover:text-white transition-colors"
+                  >3rto3h@hial.edu.in</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div
+          class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400"
+        >
+          <p>&copy; 2024 HIAL Educational Confluence. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      // Mobile menu toggle
+      document
+        .getElementById("menu-toggle")
+        .addEventListener("click", function () {
+          document.getElementById("mobile-menu").classList.toggle("hidden");
+        });
+
+      // Navbar scroll effects
+      window.addEventListener("scroll", function () {
+        const navbar = document.getElementById("navbar");
+        if (window.scrollY > 0) {
+          navbar.classList.add("scrolled");
+          navbar.style.background =
+            "linear-gradient(to right, rgba(113, 17, 23, 0.95), rgba(136, 103, 42, 0.95))";
+        } else {
+          navbar.classList.remove("scrolled");
+          navbar.style.background = "transparent";
+        }
+      });
+
+      // Fade-in animation
+      const fadeElements = document.querySelectorAll(".fade-in");
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("active");
+            }
+          });
+        },
+        { threshold: 0.1 }
+      );
+
+      fadeElements.forEach((element) => {
+        observer.observe(element);
+      });
+    </script>
+  </body>
+</html>
