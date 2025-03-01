@@ -107,23 +107,18 @@
         z-index: 50;
         transition: all 300ms;
         background: transparent;
+        transform: translateY(-100%);
       }
 
       .navbar.scrolled {
-        background: var(--theme-gradient);
-        backdrop-filter: blur(8px);
+        background: white;
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        transform: translateY(0);
       }
 
       /* Add new styles for navbar gradient */
       .navbar-gradient {
-        background: linear-gradient(
-          to right,
-          rgba(113, 17, 23, 0.95),
-          rgba(136, 103, 42, 0.95)
-        );
-        background-size: 300% 300%;
-        animation: gradient 15s ease infinite;
+        background: transparent;
         transition: all 0.3s ease;
       }
 
@@ -189,14 +184,14 @@
         <div class="flex items-center space-x-2">
           <div class="w-10 h-10 rounded-full flex items-center justify-center">
             <img
-              src="https://hial.edu.in/static/logo_white.png"
+              src="./logo.png"
               alt="HIAL Logo"
               class="w-full h-full object-contain"
             />
           </div>
           <span class="w-10 h-10 rounded-full flex items-center justify-center">
             <img
-              src="https://hial.edu.in/static/logo.png"
+              src="./3h3rr.png"
               alt="HIAL Logo"
               class="w-full h-full object-cover"
             />
@@ -205,32 +200,32 @@
         <div class="hidden md:flex space-x-8 text-sm font-medium">
           <a
             href="#about"
-            class="text-white hover:text-[#88672a] transition-colors"
+            class="text-gray-800 hover:text-[#711117] transition-colors"
             >About</a
           >
           <a
             href="#theme"
-            class="text-white hover:text-[#88672a] transition-colors"
+            class="text-gray-800 hover:text-[#711117] transition-colors"
             >Theme</a
           >
           <a
             href="#schedule"
-            class="text-white hover:text-[#88672a] transition-colors"
+            class="text-gray-800 hover:text-[#711117] transition-colors"
             >Schedule</a
           >
           <a
             href="#register"
-            class="text-white hover:text-[#88672a] transition-colors"
+            class="text-gray-800 hover:text-[#711117] transition-colors"
             >Register</a
           >
           <a
             href="#contact"
-            class="text-white hover:text-[#88672a] transition-colors"
+            class="text-gray-800 hover:text-[#711117] transition-colors"
             >Contact</a
           >
         </div>
         <div class="md:hidden">
-          <button class="text-gray-600" id="menu-toggle">
+          <button class="text-gray-800" id="menu-toggle">
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="h-6 w-6"
@@ -1421,7 +1416,7 @@
         <div
           class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400"
         >
-          <p>&copy; 2024 HIAL Educational Confluence. All rights reserved.</p>
+          <p>&copy; 2025 HIAL Educational Confluence. All rights reserved.</p>
         </div>
       </div>
     </footer>
@@ -1437,10 +1432,9 @@
       // Navbar scroll effects
       window.addEventListener("scroll", function () {
         const navbar = document.getElementById("navbar");
-        if (window.scrollY > 0) {
+        if (window.scrollY > 100) {
           navbar.classList.add("scrolled");
-          navbar.style.background =
-            "linear-gradient(to right, rgba(113, 17, 23, 0.95), rgba(136, 103, 42, 0.95))";
+          navbar.style.background = "white";
         } else {
           navbar.classList.remove("scrolled");
           navbar.style.background = "transparent";
