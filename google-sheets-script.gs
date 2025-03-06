@@ -2,13 +2,6 @@ const sheetName = "Form Responses";
 const spreadsheetId = ""; // You'll add your spreadsheet ID here
 
 function doPost(e) {
-  // Add CORS headers
-  var headers = {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Methods": "POST",
-    "Access-Control-Allow-Headers": "Content-Type",
-  };
-
   const lock = LockService.getScriptLock();
   lock.tryLock(10000);
 
@@ -64,11 +57,10 @@ function doPost(e) {
 
     sheet.appendRow(row);
 
+    // Return success response
     return ContentService.createTextOutput(
       JSON.stringify({ result: "success", row: row })
-    )
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders(headers);
+    ).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     // Log the error for debugging
     Logger.log(error);
@@ -79,12 +71,24 @@ function doPost(e) {
         result: "error",
         error: error.toString(),
       })
-    )
-      .setMimeType(ContentService.MimeType.JSON)
-      .setHeaders(headers);
+    ).setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();
   }
+}
+
+// Handle preflight OPTIONS request for CORS
+function doOptions(e) {
+  var output = ContentService.createTextOutput();
+  output.setMimeType(ContentService.MimeType.JSON);
+
+  // Set CORS headers
+  output.setHeader("Access-Control-Allow-Origin", "*");
+  output.setHeader("Access-Control-Allow-Methods", "GET, POST, OPTIONS");
+  output.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  output.setHeader("Access-Control-Max-Age", "86400");
+
+  return output;
 }
 
 function doGet(e) {
