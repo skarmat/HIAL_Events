@@ -1,13 +1,33 @@
 const sheetName = "Form Responses";
-const spreadsheetId = ""; // You'll add your spreadsheet ID here
+// ====================================================================
+// IMPORTANT: Replace the empty string below with your Google Sheet ID
+// To find your Sheet ID: Open your Google Sheet, look at the URL:
+// https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/edit
+// Copy the YOUR_SHEET_ID_HERE part and paste it below
+// ====================================================================
+const spreadsheetId = ""; // Add your spreadsheet ID here
 
 function doPost(e) {
+  // Validate spreadsheet ID
+  if (!spreadsheetId || spreadsheetId.trim() === "") {
+    return ContentService.createTextOutput(
+      JSON.stringify({
+        result: "error",
+        error:
+          "Spreadsheet ID is not configured. Please set the spreadsheetId variable in the script.",
+      })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+
   const lock = LockService.getScriptLock();
   lock.tryLock(10000);
 
   try {
+    // Log incoming data for debugging
+    Logger.log("Received data: " + e.postData.contents);
+
     const doc = SpreadsheetApp.openById(spreadsheetId);
-    const sheet = doc.getSheetByName(sheetName);
+    const sheet = doc.getSheetByName(sheetName) || doc.insertSheet(sheetName);
 
     const headers = [
       "Timestamp",
@@ -33,7 +53,19 @@ function doPost(e) {
       sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     }
 
-    const data = JSON.parse(e.postData.contents);
+    let data;
+    try {
+      data = JSON.parse(e.postData.contents);
+    } catch (parseError) {
+      Logger.log("Error parsing JSON: " + parseError);
+      return ContentService.createTextOutput(
+        JSON.stringify({
+          result: "error",
+          error: "Invalid JSON data: " + parseError.toString(),
+        })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
     const timestamp = new Date();
 
     const row = [
@@ -56,20 +88,25 @@ function doPost(e) {
     ];
 
     sheet.appendRow(row);
+    Logger.log("Data successfully appended to sheet");
 
-    // Return success response
-    return ContentService.createTextOutput(
+    // Return success response with CORS headers
+    const output = ContentService.createTextOutput(
       JSON.stringify({ result: "success", row: row })
     ).setMimeType(ContentService.MimeType.JSON);
+
+    return output;
   } catch (error) {
     // Log the error for debugging
-    Logger.log(error);
+    Logger.log("Error in doPost: " + error);
+    Logger.log("Stack: " + error.stack);
 
     // Return error response
     return ContentService.createTextOutput(
       JSON.stringify({
         result: "error",
         error: error.toString(),
+        stack: error.stack,
       })
     ).setMimeType(ContentService.MimeType.JSON);
   } finally {
@@ -92,7 +129,17 @@ function doOptions(e) {
 }
 
 function doGet(e) {
-  return ContentService.createTextOutput(
-    JSON.stringify({ result: "success", method: "get" })
+  // Add CORS headers to GET response
+  var output = ContentService.createTextOutput(
+    JSON.stringify({
+      result: "success",
+      method: "get",
+      message:
+        "The web app is running correctly. To submit data, use POST method.",
+    })
   ).setMimeType(ContentService.MimeType.JSON);
+
+  output.setHeader("Access-Control-Allow-Origin", "*");
+
+  return output;
 }
