@@ -2,6 +2,13 @@ const sheetName = "Form Responses";
 const spreadsheetId = ""; // You'll add your spreadsheet ID here
 
 function doPost(e) {
+  // Add CORS headers
+  var headers = {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+
   const lock = LockService.getScriptLock();
   lock.tryLock(10000);
 
@@ -38,32 +45,43 @@ function doPost(e) {
 
     const row = [
       timestamp,
-      data.name,
-      data.profession,
+      data.name || "",
+      data.profession || "",
       data.company || "",
-      data.phone,
-      data.email,
-      data.address,
-      data.participation_type,
+      data.phone || "",
+      data.email || "",
+      data.address || "",
+      data.participation_type || "",
       data.participant_count || "1",
       data.group_participants || "",
-      data.participation_reason,
+      data.participation_reason || "",
       data.photo_url || "",
-      data.accommodation_type,
-      data.transaction_id,
+      data.accommodation_type || "",
+      data.transaction_id || "",
       data.payment_screenshot_url || "",
-      data.total_amount,
+      data.total_amount || "",
     ];
 
     sheet.appendRow(row);
 
     return ContentService.createTextOutput(
-      JSON.stringify({ result: "success" })
-    ).setMimeType(ContentService.MimeType.JSON);
+      JSON.stringify({ result: "success", row: row })
+    )
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(headers);
   } catch (error) {
+    // Log the error for debugging
+    Logger.log(error);
+
+    // Return error response
     return ContentService.createTextOutput(
-      JSON.stringify({ result: "error", error: error })
-    ).setMimeType(ContentService.MimeType.JSON);
+      JSON.stringify({
+        result: "error",
+        error: error.toString(),
+      })
+    )
+      .setMimeType(ContentService.MimeType.JSON)
+      .setHeaders(headers);
   } finally {
     lock.releaseLock();
   }
