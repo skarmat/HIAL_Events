@@ -1,5 +1,5 @@
 const sheetName = "Form Responses";
-const spreadsheetId = ""; // Add your spreadsheet ID here
+const spreadsheetId = ""; // You'll add your spreadsheet ID here
 
 function doPost(e) {
   const lock = LockService.getScriptLock();
@@ -21,8 +21,10 @@ function doPost(e) {
       "Number of Participants",
       "Group Participants",
       "Participation Reason",
+      "Photo URL",
       "Accommodation Type",
       "Transaction ID",
+      "Payment Screenshot URL",
       "Total Amount",
     ];
 
@@ -31,33 +33,36 @@ function doPost(e) {
       sheet.getRange(1, 1, 1, headers.length).setValues([headers]);
     }
 
-    // Get form data from POST parameters
+    const data = JSON.parse(e.postData.contents);
     const timestamp = new Date();
+
     const row = [
       timestamp,
-      e.parameter.name,
-      e.parameter.profession,
-      e.parameter.company,
-      e.parameter.phone,
-      e.parameter.email,
-      e.parameter.address,
-      e.parameter.participation_type,
-      e.parameter.participant_count,
-      e.parameter.group_participants,
-      e.parameter.participation_reason,
-      e.parameter.accommodation_type,
-      e.parameter.transaction_id,
-      e.parameter.total_amount,
+      data.name,
+      data.profession,
+      data.company || "",
+      data.phone,
+      data.email,
+      data.address,
+      data.participation_type,
+      data.participant_count || "1",
+      data.group_participants || "",
+      data.participation_reason,
+      data.photo_url || "",
+      data.accommodation_type,
+      data.transaction_id,
+      data.payment_screenshot_url || "",
+      data.total_amount,
     ];
 
     sheet.appendRow(row);
 
     return ContentService.createTextOutput(
-      JSON.stringify({ result: "success", row: row })
+      JSON.stringify({ result: "success" })
     ).setMimeType(ContentService.MimeType.JSON);
   } catch (error) {
     return ContentService.createTextOutput(
-      JSON.stringify({ result: "error", error: error.toString() })
+      JSON.stringify({ result: "error", error: error })
     ).setMimeType(ContentService.MimeType.JSON);
   } finally {
     lock.releaseLock();
