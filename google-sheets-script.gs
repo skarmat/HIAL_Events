@@ -5,9 +5,19 @@ const sheetName = "Form Responses";
 // https://docs.google.com/spreadsheets/d/YOUR_SHEET_ID_HERE/edit
 // Copy the YOUR_SHEET_ID_HERE part and paste it below
 // ====================================================================
-const spreadsheetId = ""; // Add your spreadsheet ID here
+const spreadsheetId = "1Yx-Yx-YxYxYxYxYxYxYxYxYxYxYxYxYxYxYxYxY"; // Replace with your actual spreadsheet ID
 
 function doPost(e) {
+  // Validate if request exists
+  if (!e || !e.postData) {
+    return ContentService.createTextOutput(
+      JSON.stringify({
+        result: "error",
+        error: "No request data received",
+      })
+    ).setMimeType(ContentService.MimeType.JSON);
+  }
+
   // Validate spreadsheet ID
   if (!spreadsheetId || spreadsheetId.trim() === "") {
     return ContentService.createTextOutput(
@@ -24,6 +34,18 @@ function doPost(e) {
 
   try {
     // Log incoming data for debugging
+    Logger.log("Request received with postData: " + JSON.stringify(e.postData));
+
+    // Check if contents exists
+    if (!e.postData || !e.postData.contents) {
+      return ContentService.createTextOutput(
+        JSON.stringify({
+          result: "error",
+          error: "No data in request",
+        })
+      ).setMimeType(ContentService.MimeType.JSON);
+    }
+
     Logger.log("Received data: " + e.postData.contents);
 
     const doc = SpreadsheetApp.openById(spreadsheetId);
@@ -56,6 +78,7 @@ function doPost(e) {
     let data;
     try {
       data = JSON.parse(e.postData.contents);
+      Logger.log("Parsed data: " + JSON.stringify(data));
     } catch (parseError) {
       Logger.log("Error parsing JSON: " + parseError);
       return ContentService.createTextOutput(
@@ -95,6 +118,7 @@ function doPost(e) {
       JSON.stringify({ result: "success", row: row })
     ).setMimeType(ContentService.MimeType.JSON);
 
+    output.setHeader("Access-Control-Allow-Origin", "*");
     return output;
   } catch (error) {
     // Log the error for debugging
@@ -102,13 +126,16 @@ function doPost(e) {
     Logger.log("Stack: " + error.stack);
 
     // Return error response
-    return ContentService.createTextOutput(
+    const output = ContentService.createTextOutput(
       JSON.stringify({
         result: "error",
         error: error.toString(),
         stack: error.stack,
       })
     ).setMimeType(ContentService.MimeType.JSON);
+
+    output.setHeader("Access-Control-Allow-Origin", "*");
+    return output;
   } finally {
     lock.releaseLock();
   }

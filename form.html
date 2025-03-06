@@ -700,64 +700,62 @@
         try {
           console.log("Submitting form data:", formData);
 
-          // First check if the script URL is accessible
-          try {
-            const testResponse = await fetch(scriptURL + "?test=1", {
-              method: "GET",
-              mode: "cors",
-            });
+          // Alternative approach using XMLHttpRequest which can be more reliable with Google Apps Script
+          const xhr = new XMLHttpRequest();
+          xhr.open("POST", scriptURL, true);
+          xhr.setRequestHeader(
+            "Content-Type",
+            "application/json;charset=UTF-8"
+          );
 
-            if (!testResponse.ok) {
-              throw new Error(`Connection test failed: ${testResponse.status}`);
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+              console.log("Response status:", xhr.status);
+              console.log("Response text:", xhr.responseText);
+
+              if (xhr.status >= 200 && xhr.status < 300) {
+                try {
+                  const result = JSON.parse(xhr.responseText);
+                  if (result.result === "success") {
+                    // Reset form and proceed to thank you page
+                    form.reset();
+                    nextStep(4);
+                  } else {
+                    throw new Error(result.error || "Submission failed");
+                  }
+                } catch (e) {
+                  console.error("Error parsing response:", e);
+                  alert(
+                    "Error processing server response. Please try again or contact support."
+                  );
+                  // Reset button state
+                  submitButton.textContent = originalButtonText;
+                  submitButton.disabled = false;
+                }
+              } else {
+                console.error("HTTP error:", xhr.status);
+                alert(
+                  "Error submitting form. Please try again or contact support."
+                );
+                // Reset button state
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+              }
             }
+          };
 
-            console.log("Connection test successful");
-          } catch (testError) {
-            console.error("Connection test failed:", testError);
-            throw new Error(
-              `Cannot connect to the server. Please check your internet connection and try again. Error: ${testError.message}`
+          xhr.onerror = function () {
+            console.error("Network error occurred");
+            alert(
+              "Network error. Please check your internet connection and try again."
             );
-          }
+            // Reset button state
+            submitButton.textContent = originalButtonText;
+            submitButton.disabled = false;
+          };
 
-          // Now submit the actual data
-          const response = await fetch(scriptURL, {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify(formData),
-            mode: "cors",
-            redirect: "follow",
-          });
-
-          console.log("Response status:", response.status);
-
-          // Check if response is ok
-          if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-          }
-
-          const responseText = await response.text();
-          console.log("Response text:", responseText);
-
-          let result;
-          try {
-            result = JSON.parse(responseText);
-          } catch (e) {
-            console.error("Error parsing JSON:", e);
-            throw new Error("Invalid response format from server");
-          }
-
-          if (result.result === "success") {
-            // Reset form and proceed to thank you page
-            form.reset();
-            nextStep(4);
-          } else {
-            throw new Error(
-              result.error ||
-                "Submission failed: " + (result.error || "Unknown error")
-            );
-          }
+          // Send the request
+          xhr.send(JSON.stringify(formData));
         } catch (error) {
           console.error("Error:", error);
 
