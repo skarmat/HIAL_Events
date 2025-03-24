@@ -729,7 +729,7 @@
 
         // Google Apps Script Web App URL - REPLACE THIS WITH YOUR DEPLOYED SCRIPT URL
         const scriptURL =
-          "https://script.google.com/macros/s/AKfycbzRfXk4ImD_pGPVyn3SUhbXpMkronKWQysVGZlXaj8edohevmoshuDxcXINGw3DEVCZYw/exec";
+          "https://script.google.com/macros/s/AKfycbz3rRhN8n1j8uu_6zjhbahYrOman4-2YcNGBkBuZkj7jXzVGt34O7v-BfAGiISBjqtn/exec";
 
         try {
           console.log("Submitting form data:", formData);
@@ -1039,25 +1039,10 @@
           const participantCount = document.querySelector(
             'input[name="participant_count"]'
           ).value;
-          const groupParticipants = document
-            .querySelector('textarea[name="group_participants"]')
-            .value.trim();
-
           if (!participantCount || participantCount < 2) {
             errorMessage +=
               "Please enter number of participants (minimum 2).\n";
           }
-          if (!groupParticipants) {
-            errorMessage += "Please enter names of remaining participants.\n";
-          }
-        }
-
-        // Check participation reason
-        const participationReason = document
-          .querySelector('textarea[name="participation_reason"]')
-          .value.trim();
-        if (!participationReason) {
-          errorMessage += "Please enter your reason for participation.\n";
         }
 
         // If there are errors, show them
@@ -1066,52 +1051,72 @@
           return;
         }
 
-        // If validation passes, proceed to next step
-        nextStep(3);
+        // Show loading state
+        const submitButton = document.querySelector(
+          'button[onclick="validateAndProceed()"]'
+        );
+        const originalText = submitButton.textContent;
+        submitButton.textContent = "Submitting...";
+        submitButton.disabled = true;
+
+        // Prepare form data
+        const formData = {
+          name: name,
+          profession: profession,
+          gender: gender,
+          medical_conditions: document.querySelector(
+            'input[name="medical_conditions"]'
+          ).value,
+          food_allergies: document.querySelector('input[name="food_allergies"]')
+            .value,
+          company: document.querySelector('input[name="company"]').value,
+          phone: phone,
+          email: email,
+          address: address,
+          participation_type: participationType,
+          participant_count:
+            participationType === "group"
+              ? document.querySelector('input[name="participant_count"]').value
+              : "1",
+          group_participants:
+            participationType === "group"
+              ? JSON.stringify(collectPassengerDetails())
+              : "",
+        };
+
+        // Submit the form
+        submitToGoogleSheets(formData, submitButton, originalText);
       }
 
-      /* Payment validation function */
-      function validatePaymentAndProceed() {
-        // Get all required fields
-        const accommodationType = document.querySelector(
-          'input[name="accommodation_type"]:checked'
-        )?.value;
-        const transactionId = document
-          .querySelector('input[name="transaction_id"]')
-          .value.trim();
-        const paymentScreenshot = document.querySelector(
-          'input[name="payment_screenshot"]'
-        ).files[0];
+      async function submitToGoogleSheets(
+        formData,
+        submitButton,
+        originalText
+      ) {
+        // Replace this URL with your deployed Google Apps Script URL
+        const SCRIPT_URL =
+          "https://script.google.com/macros/s/AKfycbz3rRhN8n1j8uu_6zjhbahYrOman4-2YcNGBkBuZkj7jXzVGt34O7v-BfAGiISBjqtn/exec";
 
-        // Validation messages
-        let errorMessage = "";
+        try {
+          const response = await fetch(SCRIPT_URL, {
+            method: "POST",
+            mode: "no-cors",
+            cache: "no-cache",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(formData),
+          });
 
-        // Validate accommodation type
-        if (!accommodationType) {
-          errorMessage += "Please select an accommodation type.\n";
+          // Since we're using no-cors, we can't actually check the response
+          // Just redirect to HIAL website
+          window.location.href = "https://hial.edu.in";
+        } catch (error) {
+          console.error("Submission error:", error);
+          alert("Error submitting form. Please try again.");
+          submitButton.textContent = originalText;
+          submitButton.disabled = false;
         }
-
-        // Validate transaction ID
-        if (!transactionId) {
-          errorMessage += "Please enter the transaction ID.\n";
-        } else if (transactionId.length < 8) {
-          errorMessage +=
-            "Transaction ID should be at least 8 characters long.\n";
-        }
-
-        // Validate payment screenshot
-        if (!paymentScreenshot) {
-          errorMessage += "Please upload the payment screenshot.\n";
-        }
-
-        // If there are errors, show them
-        if (errorMessage) {
-          alert("Please fix the following errors:\n\n" + errorMessage);
-          return;
-        }
-
-        // Submit form data to Google Sheets
-        submitFormToGoogleSheets();
       }
 
       function generatePassengerInputs(count) {

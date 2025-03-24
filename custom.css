@@ -1,0 +1,115 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap");
+
+body {
+  font-family: "Roboto", sans-serif;
+  overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+span,
+div,
+label,
+input,
+textarea,
+button {
+  font-family: "Roboto", sans-serif;
+}
+
+/* Input and placeholder styles */
+input,
+textarea {
+  font-size: 0.875rem !important; /* 14px */
+  font-weight: 400 !important;
+}
+
+input::placeholder,
+textarea::placeholder {
+  font-size: 0.875rem !important; /* 14px */
+  font-weight: 300 !important;
+  color: #6b7280 !important;
+}
+
+.font-playfair {
+  font-family: "Playfair Display", serif;
+}
+
+/* Theme colors */
+:root {
+  --theme-gradient: linear-gradient(to right, #711117, #88672a);
+  --theme-from: #711117;
+  --theme-to: #88672a;
+}
+
+.bg-theme-maroon {
+  background-color: #711117;
+}
+
+.text-theme-maroon {
+  color: #711117;
+}
+
+.hover\:bg-theme-maroon:hover {
+  background-color: #711117;
+}
+
+.hover\:text-theme-maroon:hover {
+  color: #711117;
+}
+
+.bg-theme-golden {
+  background-color: #88672a;
+}
+
+.text-theme-golden {
+  color: #88672a;
+}
+
+.hover\:bg-theme-golden:hover {
+  background-color: #88672a;
+}
+
+.hover\:text-theme-golden:hover {
+  color: #88672a;
+}
+
+.bg-theme-golden-light {
+  background-color: #f4b528;
+}
+
+.text-theme-golden-light {
+  color: #f4b528;
+}
+
+.focus\:ring-theme-golden-light:focus {
+  --tw-ring-color: #f4b528;
+}
+
+.border-theme-maroon {
+  border-color: #711117;
+}
+
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+}
+
+.theme-button {
+  background: var(--theme-gradient);
+  color: white;
+  transition: all 0.3s ease;
+}
+
+.theme-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(113, 17, 23, 0.2);
+}
